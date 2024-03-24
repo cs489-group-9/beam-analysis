@@ -73,8 +73,8 @@ def fetch_and_upload_pull_request_and_pull_request_target_workflow_runs(
             f"actions/runs?event=pull_request_target&head_sha={sha}"
         )
         print(pr_target_runs)
-        workflow_runs.extend(pr_runs)
-        workflow_runs.extend(pr_target_runs)
+        workflow_runs.append(pr_runs)
+        workflow_runs.append(pr_target_runs)
 
     print(workflow_runs)
 
