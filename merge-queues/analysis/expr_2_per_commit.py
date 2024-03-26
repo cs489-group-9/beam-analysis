@@ -12,34 +12,49 @@ client = bigquery.Client()
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+commit_mapping = defaultdict(list)
 
-def batch_commits_and_sum_build_times(
-    commits: pd.DataFrame, workflow_runs: pd.DataFrame, batch_max_wait_time: int
+
+def batch_commits_for_commit_build_times(
+    commits: pd.DataFrame,
+    workflow_runs: pd.DataFrame,
+    batch_max_wait_time: int,
 ):
     """
     Given a DataFrame of commits, batch them into groups based on the time between commits
     """
-    total_build_time = 0
-    total_batches = 0
-    total_delay = 0
     current_batch_workflows = defaultdict(list)
     current_batch_end_time = commits.iloc[0]["date"] + pd.Timedelta(
         minutes=batch_max_wait_time
     )
+    curr_commit_batch = [commits.iloc[0]]
+    curr_batch_build_time = 0
+    print("The commits", commits)
 
-    for i in range(len(commits)):
+    for i in range(1, len(commits)):
         curr_commit = commits.iloc[i]
 
         if curr_commit["date"] > current_batch_end_time:
             for _, build_times in current_batch_workflows.items():
-                total_build_time += np.mean(build_times)
+                curr_batch_build_time += np.mean(
+                    build_times
+                )  # Take the average of all builds for a certain workflow across the batch of commits
 
             current_batch_end_time = curr_commit["date"] + pd.Timedelta(
                 minutes=batch_max_wait_time
             )
+
+            for c in curr_commit_batch:
+                commit_mapping[c["sha"]].append(
+                    (
+                        curr_batch_build_time / len(curr_commit_batch),
+                        batch_max_wait_time,
+                    )
+                )
+
             current_batch_workflows = defaultdict(list)
-            total_delay += batch_max_wait_time
-            total_batches += 1
+            curr_commit_batch = [curr_commit]
+            curr_batch_build_time = 0
 
         workflows_for_commit = workflow_runs.loc[
             workflow_runs["head_sha"] == curr_commit["sha"]
@@ -51,11 +66,16 @@ def batch_commits_and_sum_build_times(
 
     # Process the last batch
     for _, build_times in current_batch_workflows.items():
-        total_build_time += np.mean(build_times)
-    total_delay += batch_max_wait_time
-    total_batches += 1
+        curr_batch_build_time += np.mean(
+            build_times
+        )  # Take the average of all builds for a certain workflow across the batch of commits
 
-    return (total_build_time, total_delay, total_delay / total_batches)
+    for c in curr_commit_batch:
+        commit_mapping[c["sha"]].append(
+            (curr_batch_build_time / len(curr_commit_batch), batch_max_wait_time)
+        )
+
+    return commit_mapping
 
 
 def run_monte_carlo_simulation(
@@ -68,22 +88,24 @@ def run_monte_carlo_simulation(
         ).sort_index()  # retain original sorted order which which started at the earliest commit in range and is ascending by time
 
         merge_queue_batch_delay = np.random.randint(1, 61)
-        build_time, total_delay, mean_delay = batch_commits_and_sum_build_times(
+        batch_commits_for_commit_build_times(
             bootstrap_sample, workflow_runs, merge_queue_batch_delay
         )
 
-        simulation_results.append(
-            {
-                "merge_queue_batch_delay": merge_queue_batch_delay,
-                "total_ci_minutes": build_time,
-                "total_delay": total_delay,
-                "mean_delay": mean_delay,
-            }
-        )
+    #     simulation_results.append(
+    #         {
+    #             "merge_queue_batch_delay": merge_queue_batch_delay,
+    #             "total_ci_minutes": build_time,
+    #             "total_delay": total_delay,
+    #             "mean_delay": mean_delay,
+    #         }
+    #     )
 
-    simulation_results_df = pd.DataFrame(simulation_results)
+    # simulation_results_df = pd.DataFrame(simulation_results)
 
-    return simulation_results_df
+    print(commit_mapping)
+
+    return []
 
 
 def run_control(workflow_runs: pd.DataFrame):
@@ -133,11 +155,11 @@ def main():
 
     logger.info("Running Monte Carlo Simulation...")
     simulation_results_df = run_monte_carlo_simulation(
-        commits_df, workflow_runs_df, iterations=10
+        commits_df, workflow_runs_df, iterations=2
     )
-    print(simulation_results_df)
-    print(control_build_minutes)
-    plot_simulation_results(simulation_results_df)
+    # print(simulation_results_df)
+    # print(control_build_minutes)
+    # plot_simulation_results(simulation_results_df)
 
 
 if __name__ == "__main__":
