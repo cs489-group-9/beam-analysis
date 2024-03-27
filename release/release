@@ -1,14 +1,28 @@
 #!/usr/bin/env bash
+echo "==================== 1. RELEASE PREPARATION ======================="
 ./release_preparation.sh
+printf "\n\n"
 
+echo "==================== 2. STABILIZE RELEASE BRANCH ======================="
 ./stabilize_release_branch.sh
+printf "\n\n"
 
+echo "==================== 3. BUILD RELEASE CANDIDATE ======================="
 ./build_release_candidate.sh
+printf "\n\n"
 
+echo "==================== 4. VALIDATE AND APPROVE RELEASE CANDIDATE ======================="
 ./validate_and_approve_release_candidate.sh
+printf "\n\n"
 
+echo "==================== 5. FINALIZE RELEASE ======================="
 ./finalize_release.sh
+printf "\n\n"
 
+echo "==================== 6. PROMOTE RELEASE ======================="
 ./promote_release.sh
+printf "\n\n"
 
+echo "==================== 7. POST RELEASE ======================="
 ./post_release.sh
+printf "\n\n"
