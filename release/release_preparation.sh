@@ -35,6 +35,14 @@ if [[ "$continue" = "y" ]]; then
     printf "\nPlease find the steps to upload the key \e]8;;https://github.com/apache/beam/blob/7f04c4f07f2698f823953902bfb79fc7cb6e1584/contributor-docs/release-guide.md#access-to-apache-nexus-repository\e\\here\n\e]8;;\e\\"
 fi
 
+printf "\Confirm Access to Apache Nexus Repository\n"
+printf "\nSteps to do so can be found here https://github.com/apache/beam/blob/master/contributor-docs/release-guide.md#access-to-apache-nexus-repository\n"
+
+read -r -p "Do you have access [y/n]: " continue
+
+if [[ "$continue" = "n" ]]; then
+   exit 0
+fi
 
 printf "\nDependency Checks\n"
 
