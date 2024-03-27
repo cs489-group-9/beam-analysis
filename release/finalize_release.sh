@@ -8,7 +8,7 @@ read -r -p "OLD_RELEASE_VERSION: " OLD_RELEASE_VERSION
 
 
 printf "Deploy Artifacts to Maven Central Repository\n"
-printf "\nPlease upload the key on the \e]8;;https://repository.apache.org/#stagingRepositories\e\\Apache Nexus Respository Manager\n\e]8;;\e\\"
+printf "\nPlease relase the staged binary artifacts to the \e]8;;https://repository.apache.org/#stagingRepositories\e\\Apache Nexus Respository Manager\n\e]8;;\e\\"
 
 printf "Deploying Python Artifacts, Docker Images, and Tagging Releases\n"
 
