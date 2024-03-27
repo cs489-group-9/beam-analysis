@@ -9,9 +9,7 @@ read -r -p "COMMIT_REF: " COMMIT_REF
 # echo $RELEASE_VERSION $RC_NUM $COMMIT_REF
 
 
-
-
-echo "==================== Tag a chosen commit for the RC ======================="
+printf "\n==================== Tag a chosen commit for the RC =======================\n"
 
 read -r -p "Do you want to do a dry run [y/n]: " dry_run
 read -r -p "Do you already have a cloned repo that includes the commit ref ${COMMIT_REF} [y/n]: " dont_need_clone
@@ -54,24 +52,84 @@ printf "\n\nPlease confirm the following...
 * The RC tag points to that commit.\n"
 
 read -r -p "Continue [y/n]: " continue
-echo $continue
+# echo $continue
 
-if [[ "$continue" = "y" ]]; then
-     echo "==================== Run build_release_candidate GitHub Action to create a release candidate ======================="
-     # NOTE!!! need to 1. configure github cli (e..g brew install gh), set up auth, and then make sure the github actions ur calling (the yml files) have on: workflow_dispatch
-     gh workflow run build_release_candidate.yml #--ref idk NEED TO CHOOSE THE RIGHT REF.. i think its just the release branch?
-
-     # echo "==================== Verify docker images ======================="
-     # RC_TAG=${RELEASE_VERSION}rc${RC_NUM}
-     # for pyver in 3.8 3.9 3.10 3.11; do
-     # docker run --rm --entrypoint sh \
-     #      apache/beam_python${pyver}_sdk:${RC_TAG} \
-     #      -c 'ls -al /opt/apache/beam/third_party_licenses/ | wc -l'
-     # done
-
-     # for javaver in 8 11 17; do
-     # docker run --rm --entrypoint sh \
-     #      apache/beam_java${javaver}_sdk:${RC_TAG} \
-     #      -c 'ls -al /opt/apache/beam/third_party_licenses/ | wc -l'
-     # done
+if [[ "$continue" = "n" ]]; then
+     exit 0
 fi
+
+printf "\n==================== Run build_release_candidate GitHub Action to create a release candidate =======================\n"
+# NOTE!!! need to 1. configure github cli (e..g brew install gh), set up auth, and then make sure the github actions ur calling (the yml files) have on: workflow_dispatch
+gh workflow run build_release_candidate.yml #--ref idk NEED TO CHOOSE THE RIGHT REF.. i think its just the release branch?
+
+printf "\n\nPlease verify the following...
+* The source zip of the whole project is present in dist.apache.org.
+* The Python binaries are present in dist.apache.org.\n"
+
+read -r -p "Continue [y/n]: " continue
+
+if [[ "$continue" = "n" ]]; then
+     exit 0
+fi
+
+printf "\n==================== Verify docker images =======================\n"
+RC_TAG=${RELEASE_VERSION}rc${RC_NUM}
+for pyver in 3.8 3.9 3.10 3.11; do
+docker run --rm --entrypoint sh \
+     apache/beam_python${pyver}_sdk:${RC_TAG} \
+     -c 'ls -al /opt/apache/beam/third_party_licenses/ | wc -l'
+done
+
+for javaver in 8 11 17; do
+docker run --rm --entrypoint sh \
+     apache/beam_java${javaver}_sdk:${RC_TAG} \
+     -c 'ls -al /opt/apache/beam/third_party_licenses/ | wc -l'
+done
+
+printf "\n==================== Publish Java staging artifacts (manual) =======================\n"
+printf "1. Log in to the Apache Nexus website.
+2. Navigate to Build Promotion -> Staging Repositories (in the left sidebar).
+3. Select repository orgapachebeam-NNNN.
+4. Click the Close button.
+5. When prompted for a description, enter “Apache Beam, version X, release candidate Y”.
+6. Review all staged artifacts on https://repository.apache.org/content/repositories/orgapachebeam-NNNN/. They should contain all relevant parts for each module, including pom.xml, jar, test jar, javadoc, etc. Artifact names should follow the existing format in which artifact name mirrors directory structure, e.g., beam-sdks-java-io-kafka. Carefully review any new artifacts. Some additional validation should be done during the rc validation step.\n"
+
+read -r -p "Continue [y/n]: " continue
+# echo $continue
+
+if [[ "$continue" = "n" ]]; then
+     exit 0
+fi
+
+printf "\n==================== Upload rc artifacts to PyPI =======================\n"
+gh workflow run deploy_release_candidate_pypi
+
+printf "\n\nPlease verify the following...
+* The File names version include rc-# suffix
+* Download Files have: 
+     - [ ] All wheels uploaded as artifacts 
+     - [ ] Release source's zip published 
+     - [ ] Signatures and hashes do not need to be uploaded\n"
+
+read -r -p "Continue [y/n]: " continue
+
+if [[ "$continue" = "n" ]]; then
+     exit 0
+fi
+
+printf "\n==================== Propose pull requests for website updates =======================\n"
+echo "Please follow the release guide."
+
+printf "\n==================== Vote and validate the release candidate =======================\n"
+echo "Please follow the release guide."
+
+printf "\n==================== Run validations using run_rc_validation.sh =======================\n"
+printf "\nPlease update required configurations listed in RC_VALIDATE_CONFIGS in script.config\n"
+
+read -r -p "Done [y/n]: " continue
+
+if [[ "$continue" = "n" ]]; then
+     exit 0
+fi
+ 
+./release/src/main/scripts/run_rc_validation.sh
