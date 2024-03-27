@@ -9,6 +9,17 @@ read -r -p "COMMIT_REF: " COMMIT_REF
 # echo $RELEASE_VERSION $RC_NUM $COMMIT_REF
 
 
+
+
+
+
+printf "\Cut the Release Branch by running Github Workflow\n"
+gh workflow run build_release_candidate.yml
+
+
+
+
+
 echo "==================== Tag a chosen commit for the RC ======================="
 
 read -r -p "Do you want to do a dry run [y/n]: " dry_run
