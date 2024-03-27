@@ -62,3 +62,13 @@ svn rm ${OLD_RELEASE_VERSION}   # Delete all artifacts from old releases.
 svn commit -m "Adding artifacts for the ${RELEASE_VERSION} release and removing old artifacts"
 
 printf "Use reporter.apache.org to seed infomration about release into future projects\n"
+
+printf "\n Verify that everything is done before moving to the next step...
+* Maven artifacts released and indexed in the Maven Central Repository
+* Source distribution available in the release repository of dist.apache.org
+* Source distribution removed from the dev repository of dist.apache.org
+* Website pull request to list the release and publish the API reference manual merged.
+* The release is tagged on Github's Tags page.
+* The release notes are published on Github's Releases page.
+* Release version finalized in GitHub.
+* Release version is listed at reporter.apache.org\n"
