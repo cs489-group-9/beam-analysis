@@ -61,7 +61,7 @@ svn rm ${OLD_RELEASE_VERSION}   # Delete all artifacts from old releases.
 
 svn commit -m "Adding artifacts for the ${RELEASE_VERSION} release and removing old artifacts"
 
-printf "Use reporter.apache.org to seed infomration about release into future projects\n"
+printf "Use reporter.apache.org to seed information about release into future projects\n"
 
 printf "\n Verify that everything is done before moving to the next step...
 * Maven artifacts released and indexed in the Maven Central Repository
