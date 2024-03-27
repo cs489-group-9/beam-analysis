@@ -17,17 +17,18 @@ fi
 printf "\nA GPG key is required. Do you need to generate one?\n"
 
 read -r -p "Continue [y/n]: " continue
-# echo $continue
 
 if [[ "$continue" = "y" ]]; then
     ./release/src/main/scripts/preparation_before_release.sh
+
+    printf "Key ID\n"
+    gpg --list-sigs --keyid-format LONG
 fi
 
 
 printf "\nDo you need to upload your key into Ubuntu OpenPGP Server?\n"
 
 read -r -p "Continue [y/n]: " continue
-# echo $continue
 
 if [[ "$continue" = "y" ]]; then
     gpg --export --armor
