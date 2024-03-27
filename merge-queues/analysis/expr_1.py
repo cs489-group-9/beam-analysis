@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 import logging
 import pandas as pd
@@ -98,6 +99,10 @@ def main():
     plot_simulation_results(simulation_results_df)
         
             
+=======
+def main():
+    print("Hello, World")
+>>>>>>> 4447bb3 (comit)
 
 
 if __name__ == "__main__":

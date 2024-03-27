@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+./release_preparation.sh
+
+./stabilize_release_branch.sh
+
+./build_release_candidate.sh
+
+./validate_and_approve_release_candidate.sh
+
+./finalize_release.sh
+
+./promote_release.sh
+
+./post_release.sh
