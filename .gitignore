@@ -1,3 +1,4 @@
 .env
 beam_analysis_env/
 __pycache__/
+*.csv
