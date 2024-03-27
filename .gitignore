@@ -1,5 +1,9 @@
 .env
 beam_analysis_env/
 __pycache__/
+<<<<<<< HEAD
 *.csv
 .DS_Store
+=======
+*.csv
+>>>>>>> 4447bb3 (comit)
