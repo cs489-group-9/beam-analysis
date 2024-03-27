@@ -26,9 +26,24 @@ if [[ "$continue" = "n" ]]; then
     exit 0
 fi
 
+printf "Merge Website Pull Requests...
+* listing the release
+* publishing the Python API reference manual and Java API reference manual
+* adding the release blog post\n"
+
+read -r -p "Continue [y/n]: " continue
+
+if [[ "$continue" = "n" ]]; then
+    exit 0
+fi
+
+printf "Publish release to Github\n"
+printf "Instructions can be found at https://github.com/apache/beam/blob/master/contributor-docs/release-guide.md#publish-release-to-github\n"
+
+
 printf "PMC-Only Finalization\n"
 
-printf "\nCopy source release from dev to the release repository at dist.apache.org\n"
+printf "\nCopying source release from dev to the release repository at dist.apache.org\n"
 
 svn co https://dist.apache.org/repos/dist/dev/beam dev  # Checkout the `dev` artifact repo.
 
@@ -45,3 +60,5 @@ svn add ${RELEASE_VERSION}
 svn rm ${OLD_RELEASE_VERSION}   # Delete all artifacts from old releases.
 
 svn commit -m "Adding artifacts for the ${RELEASE_VERSION} release and removing old artifacts"
+
+printf "Use reporter.apache.org to seed infomration about release into future projects\n"
