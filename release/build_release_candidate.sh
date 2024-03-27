@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-read -r -p "RELEASE_VERSION: " RELEASE_VERSION
-
+RELEASE_VERSION=$1
 read -r -p "RC_NUM: " RC_NUM
 
 read -r -p "COMMIT_REF: " COMMIT_REF
@@ -56,7 +55,7 @@ read -r -p "Continue [y/n]: " continue
 # echo $continue
 
 if [[ "$continue" = "n" ]]; then
-     exit 0
+     exit 1
 fi
 
 printf "\n==================== 3.2 Run build_release_candidate GitHub Action to create a release candidate =======================\n"
@@ -70,7 +69,7 @@ printf "\n\nPlease verify the following...
 read -r -p "Continue [y/n]: " continue
 
 if [[ "$continue" = "n" ]]; then
-     exit 0
+     exit 1
 fi
 
 printf "\n==================== 3.3 Verify docker images =======================\n"
@@ -99,7 +98,7 @@ read -r -p "Continue [y/n]: " continue
 # echo $continue
 
 if [[ "$continue" = "n" ]]; then
-     exit 0
+     exit 1
 fi
 
 printf "\n==================== 3.5 Upload rc artifacts to PyPI =======================\n"
@@ -115,7 +114,7 @@ printf "\n\nPlease verify the following...
 read -r -p "Continue [y/n]: " continue
 
 if [[ "$continue" = "n" ]]; then
-     exit 0
+     exit 1
 fi
 
 printf "\n==================== 3.6 Propose pull requests for website updates =======================\n"
