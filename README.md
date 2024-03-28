@@ -79,7 +79,14 @@ To run the Merge Queue notebooks (`expr_2_per_commit.ipynb` and `expr_2_relation
 
 ### Running the Merge Queue Script for Improvement 1
 
+Within the following code specified in the main function of the `expr_1.py` file, it's possible to change the number of iterations of the experiment to run. The graphs produced within deliverable 2 for this improvement ran on 1000 iterations, totalling runtime of 84 minutes. In its current state of 10 iterations, the entirety of the experiment can run in 1 minute so that TAs can quickly replicate the visuals/data. Increasing the iterations will produce more rigorous visual analysis/results at a higher time cost, feel free to adjust the number of iterations accordingly. 
+```
+simulation_results_df = run_monte_carlo_simulation(
+        commits_df, workflow_runs_df, iterations=10
+)
+```
 
+Run `python expr_1.py` to execute the script for Improvement 1
 
 
 ### Running the Merge Queue Notebooks for Improvement 2
