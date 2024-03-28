@@ -12,12 +12,9 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def upload_to_storage(bucket_name: str, file_name: str, data: List[str]):
-    storage_client = storage.Client()
-    bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_name)
-    json_data = json.dumps(data)
-    blob.upload_from_string(json_data, content_type="application/json")
+def save_to_file(data, filename):
+    with open(filename, "w+") as file:
+        json.dump(data, file)
 
 
 def fetch_and_upload_commits(api: GithubAPI):
@@ -30,7 +27,7 @@ def fetch_and_upload_commits(api: GithubAPI):
         total_commits.extend(commits)
 
     commit_shas = set([commit["sha"] for commit in total_commits])
-    upload_to_storage("beam-analysis", "commits.json", total_commits)
+    save_to_file(total_commits, "commits.json")
 
     return commit_shas
 
@@ -46,7 +43,7 @@ def fetch_and_upload_push_and_schedule_workflow_runs(
         workflow_runs.append(push_runs)
         workflow_runs.append(schedule_runs)
 
-    upload_to_storage("beam-analysis", "workflow_runs_push.json", workflow_runs)
+    save_to_file(workflow_runs, "workflow_runs_push.json")
 
 
 def fetch_and_upload_pull_requests(api: GithubAPI, commit_shas: List[str]):
@@ -56,7 +53,7 @@ def fetch_and_upload_pull_requests(api: GithubAPI, commit_shas: List[str]):
         prs = api.fetchData(f"commits/{sha}/pulls")
         pull_requests.extend(prs)
 
-    upload_to_storage("beam-analysis", "pull_requests.json", pull_requests)
+    save_to_file(pull_requests, "pull_requests.json")
     return [pr["head"]["sha"] for pr in pull_requests]
 
 
@@ -75,9 +72,8 @@ def fetch_and_upload_pull_request_and_pull_request_target_workflow_runs(
         workflow_runs.append(pr_runs)
         workflow_runs.append(pr_target_runs)
 
-    upload_to_storage(
-        "beam-analysis", "workflow_runs_pull_requests.json", workflow_runs
-    )
+    save_to_file(workflow_runs, "workflow_runs_pull_requests.json")
+
     return []
 
 
