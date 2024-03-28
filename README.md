@@ -20,7 +20,7 @@ However, if you would like to replicate our steps to test the functional correct
 GITHUB_TOKEN=<the token provided in the report>
 ```
 
-Next, to run `fetch_data.py` or any of the python notebooks provided you need to set up the `gcloud` CLI locally. Faizaan, one of the people in the team has made a post in Piazza requesting your email addresses to add you to the GCP Project. Please follow the instructions here to set up GCloud for your operating system:
+Next, to run `fetch_data.py` or any of the python notebooks provided you need to set up the `gcloud` CLI locally. Faizaan, one of the people in the team has made a post in Piazza requesting your email addresses to add you to the GCP Project. Please follow the instructions here to set up GCloud for your operating system. After Faizaan adds your emails, you need to except the invite, so please check your email for it and accept it!
 
 https://cloud.google.com/sdk/docs/install
 
@@ -40,13 +40,13 @@ gcloud auth application-default login
 
 The url linked also provides documentation on how to do this.
 
-### (Optional) Replicating what we did for adding Github Data to BigQuery
+### [Not Required] Replicating what we did for adding Github Data to BigQuery
 
-Running `fetch_data.py` will generate json files that will be saved locally. Note that it also generates .txt files, but these can be ignored as they are written as a failsafe to cache intermediary results.
+Run `fetch_data.py`. You will first need to navigate to `merge-queues/` and run `pip install-requirements.txt` to make sure all the packages are installed. This will generate json files that will be saved locally. Note that it also generates .txt files, but these can be ignored as they are written as a failsafe to cache intermediary results.
 
 **IMPORTANT NOTE FOR MARKER:**
 
-**Since the files have already been generated we would encourage you to not perform the following steps, as reuploading the files would require you to overwrite the tables we have already created.**
+**Since the tables have already been generated and are stable we would encourage you to not perform the following steps, as reuploading the files would require you to overwrite the tables we have already created.**
 
 **You will need to delete our tables to make sure they get created with the same names to ensure our notebooks can still query from them which could inadvertently break our notebooks if the data upload does not happen properly.**
 
@@ -75,6 +75,39 @@ After you've done this for all the generated files, you can create new tables an
 
 From there, click the right facing arrow next to `scientific-glow-417622` in the explorer, click the arrow next to be `beam` to view the tables created. Your Explorer should look like this
 
-Then, click the three vertical dots next to the beam logo, and click Create Table, which will open a form. For the commits.json, it would be filled out like this, and we would upload the file from our local computer
+Then, click the three vertical dots next to the beam logo, and click Create Table, which will open a form. For the commits.json, it would be filled out like this, and we would upload the file from our local computer:
 
-<Insert image here>
+<img width="1279" alt="Screenshot 2024-03-27 at 8 33 09 PM" src="https://github.com/cs489-group-9/beam-analysis/assets/25042843/addc019a-1a06-4697-b881-62f5bf169909">
+
+## Improvement 1 and 2: Merge Queues
+
+To run the Merge Queue notebooks (`expr_2_per_commit.ipynb` and `expr_2_relationship.ipynb`) or the merge queue script (`analysis/expr_1.py`), first navigate to `merge-queues/`. If you haven't already run `pip install -r requirements.txt`, run it to install all the packages. Note that we are currently using Python 3.11.7 and the packages the Notebooks were run using my global python package. Then, proceed to navigate one level down to the `analysis` subdirectory.
+
+### Running the Merge Queue Script for Improvement 1
+
+
+
+
+### Running the Merge Queue Notebooks for Improvement 2
+
+Then, for each of the notebooks (`expr_2_per_commit.ipynb` and `expr_2_relationship.ipynb`) hit "Run All". This will run the Monte Carlo Simulation for 10,000 iterations, which on my computer, took approximately 3 hours for each file. I recommend running them simultaneously. You can manipulate this metric for faster results by editing the call to and changing the number passed to `iterations`. This function name is in the same for both files.
+
+```
+run_monte_carlo_simulation(
+    commits_df, workflow_runs_df, iterations=10000
+)
+```
+
+Running both these notebooks will generate the outputs explained in Artifact 2. 
+
+If you run into issues with the BigQuery calls for any script, make sure you are authenticated to GCloud and your project is set correctly. Since the call looks for configurations in your local environment, it's possible that it may not work as expected if you run python inside a virtual python environment, so I recommend using the global python instance and keeping it the same as 3.11.7. If you continue to run into issues with GCloud please reach out to fmadhani@uwaterloo.ca or any other member of the group. We will assign you owner permissions in our GCP project when we receive your email, which has functioned for every team member, but IAM can be tricky and we will make sure you have all the appropriate permissions.
+
+If you run into issues with missing packages, or package version dependencies, make sure your Python is up to date and using 3.11.7 and make sure `pip install -r requirements.txt` completes successfully when you are in the merge-queues/ directory. Note, since the `requirements.txt` file is in the `merge-queues/` directory, you must be at that directory level when running the install command. These requirements are shared across all the python files in `merge-queues/` which is why it is at that level.
+
+The files also contain some additional notes and documentation.
+
+
+
+
+
+
