@@ -2,7 +2,7 @@
 
 This repository contains Group 9s Artifact 3 implementations for the CS 489 Project
 
-## How to set up your environment for running everything in the `merge-queues/` subdirectory
+## How to set up your environment for running everything in the `merge-queues/` subdirectory (Improvements 1 and 2)
 
 The directory `merge-queues` contains the improvements described in Improvement 1 and Improvement 2, along with the script that we used for mining commits and workflow data from the Github API.
 
