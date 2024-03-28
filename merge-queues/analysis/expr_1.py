@@ -12,37 +12,43 @@ client = bigquery.Client(project="scientific-glow-417622")
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def threshold_vs_developer_velocity(commits: pd.DataFrame, workflow_runs: pd.DataFrame, threshold: int):
+
+def threshold_vs_developer_velocity(
+    commits: pd.DataFrame, workflow_runs: pd.DataFrame, threshold: int
+):
     passing_commits = 0
     for i in range(len(commits)):
         curr_commit = commits.iloc[i]
         failures, successes = 0, 0
 
-        workflows_for_commit = workflow_runs.loc[workflow_runs["head_sha"] == curr_commit["sha"]]
+        workflows_for_commit = workflow_runs.loc[
+            workflow_runs["head_sha"] == curr_commit["sha"]
+        ]
 
         for _, workflow in workflows_for_commit.iterrows():
             if workflow["conclusion"] == "success":
                 successes += 1
             else:
                 failures += 1
-        
-        if successes+failures > 0:
-            passing_percentage = successes / (successes+failures)
+
+        if successes + failures > 0:
+            passing_percentage = successes / (successes + failures)
             if passing_percentage * 100 > threshold:
                 passing_commits += 1
     return passing_commits
 
 
-def run_monte_carlo_simulation(commits: pd.DataFrame, workflow_runs: pd.DataFrame, iterations: int):
+def run_monte_carlo_simulation(
+    commits: pd.DataFrame, workflow_runs: pd.DataFrame, iterations: int
+):
     simulation_results = []
     for _ in tqdm(range(iterations)):
         threshold_value = np.random.randint(50, 100)
-        passing_commits = threshold_vs_developer_velocity(commits, workflow_runs, threshold_value)
+        passing_commits = threshold_vs_developer_velocity(
+            commits, workflow_runs, threshold_value
+        )
         simulation_results.append(
-            {
-                "threshold_value": threshold_value,
-                "passing_commits": passing_commits
-            }
+            {"threshold_value": threshold_value, "passing_commits": passing_commits}
         )
     simulation_results_df = pd.DataFrame(simulation_results)
     return simulation_results_df
@@ -86,7 +92,7 @@ def main():
     WHERE
         commits.sha = workflow_run.head_sha AND workflow_run.event = 'schedule'
         """
-    
+
     logger.info("Fetching data from BigQuery...")
     commits_df = client.query_and_wait(query_for_commit_shas).to_dataframe()
     workflow_runs_df = client.query_and_wait(query_for_workflow_runs).to_dataframe()
@@ -96,8 +102,6 @@ def main():
         commits_df, workflow_runs_df, iterations=10
     )
     plot_simulation_results(simulation_results_df)
-        
-            
 
 
 if __name__ == "__main__":
