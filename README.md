@@ -100,6 +100,10 @@ If you run into issues with missing packages, or package version dependencies, m
 
 The files also contain some additional notes and documentation.
 
+## Running Improvement 3: Parallelization
+
+To run the Parallelization notebook (`expr3.ipynb`), first navigate to `parallelization/`. If you haven't already run `pip install -r requirements.txt`, run it to install all the packages. Then open (`expr_2_per_commit.ipynb`) and hit "Run All". This will retrieve all the build minutes data from all the workflow runs and perform the necessary data analysis. 
+
 ## Running Improvement 4: Release Automation Script
 
 ## How to use the release automation script
