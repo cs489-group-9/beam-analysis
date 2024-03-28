@@ -100,7 +100,7 @@ If you run into issues with missing packages, or package version dependencies, m
 
 The files also contain some additional notes and documentation.
 
-# Improvement 4: Release Automation Script
+## Improvement 4: Release Automation Script
 
 ## How to use the release automation script
 1. Copy all files from the `release` folder into the beam repo (main directory)
