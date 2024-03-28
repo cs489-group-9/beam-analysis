@@ -73,7 +73,7 @@ Then, click the three vertical dots next to the beam logo, and click Create Tabl
 
 <img width="1279" alt="Screenshot 2024-03-27 at 8 33 09 PM" src="https://github.com/cs489-group-9/beam-analysis/assets/25042843/addc019a-1a06-4697-b881-62f5bf169909">
 
-## Improvement 1 and 2: Merge Queues
+## Running Improvement 1 and 2: Merge Queues
 
 To run the Merge Queue notebooks (`expr_2_per_commit.ipynb` and `expr_2_relationship.ipynb`) or the merge queue script (`analysis/expr_1.py`), first navigate to `merge-queues/`. If you haven't already run `pip install -r requirements.txt`, run it to install all the packages. Note that we are currently using Python 3.11.7 and the packages the Notebooks were run using my global python package. Then, proceed to navigate one level down to the `analysis` subdirectory.
 
@@ -100,7 +100,7 @@ If you run into issues with missing packages, or package version dependencies, m
 
 The files also contain some additional notes and documentation.
 
-## Improvement 4: Release Automation Script
+## Running Improvement 4: Release Automation Script
 
 ## How to use the release automation script
 1. Copy all files from the `release` folder into the beam repo (main directory)
